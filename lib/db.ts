@@ -1,4 +1,5 @@
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "./generated/prisma";
+
 
 declare global{
     var prisma:PrismaClient|undefined;
