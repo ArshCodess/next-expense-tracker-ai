@@ -73,7 +73,7 @@ export async function generateExpenseInsights(
         {
           role: 'system',
           content:
-            'You are a financial advisor AI that analyzes spending patterns and provides actionable insights. Always respond with valid JSON only.',
+            'You are an Indian financial advisor AI that analyzes spending patterns and provides actionable insights. Always respond with valid JSON only.',
         },
         {
           role: 'user',
@@ -188,7 +188,7 @@ export async function generateAIAnswer(
       date: expense.date,
     }));
 
-    const prompt = `Based on the following expense data, provide a detailed and actionable answer to this question: "${question}"
+    const prompt = `Based on the following expense data (amount is in rupee), provide a detailed and actionable answer to this question: "${question}"
 
     Expense Data:
     ${JSON.stringify(expensesSummary, null, 2)}
