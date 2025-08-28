@@ -80,7 +80,7 @@ const AboutPage = () => {
                 99%
               </div>
               <div className='text-gray-600 dark:text-gray-400 font-medium'>
-                Satisfaction Rate
+                Satisfaction Rate 100%
               </div>
             </div>
           </div>
@@ -141,7 +141,6 @@ const AboutPage = () => {
                 </p>
               </div>
             </div>
-
             <div className='group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-gray-100/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-200 hover:-translate-y-1'>
               <div className='absolute inset-0 bg-gradient-to-br from-teal-500/5 to-emerald-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-200'></div>
               <div className='relative z-10'>
