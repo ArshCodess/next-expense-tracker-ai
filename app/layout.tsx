@@ -31,6 +31,7 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <head>
+        <link rel="shortcut icon" href="moneybag.png" type="image/x-icon" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
