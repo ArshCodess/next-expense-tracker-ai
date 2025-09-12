@@ -5,7 +5,6 @@ import ClerkThemeProvider from '@/components/ClerkThemeProvider';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { ThemeProvider } from '@/contexts/ThemeContext';
-import { ClerkProvider } from '@clerk/nextjs';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,6 +31,7 @@ export default function RootLayout({
     <html lang='en' suppressHydrationWarning>
       <head>
         <link rel="shortcut icon" href="moneybag.png" type="image/x-icon" />
+        <link rel="manifest" href="/manifest.json" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
