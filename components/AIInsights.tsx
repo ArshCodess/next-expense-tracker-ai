@@ -29,8 +29,10 @@ const AIInsights = () => {
     setIsLoading(true);
     try {
       const newInsights = await getAIInsights();
-      setInsights(newInsights);
+      setInsights(newInsights)
+      localStorage.setItem('lastAIInsights', JSON.stringify(newInsights));
       setLastUpdated(new Date());
+      localStorage.setItem('lastAIInsightsTime', new Date().toISOString());
     } catch (error) {
       console.error('❌ AIInsights: Failed to load AI insights:', error);
       // Fallback to mock data if AI fails
@@ -88,11 +90,11 @@ const AIInsights = () => {
         prev.map((a) =>
           a.insightId === insight.id
             ? {
-                ...a,
-                answer:
-                  'Sorry, I was unable to generate a detailed answer. Please try again.',
-                isLoading: false,
-              }
+              ...a,
+              answer:
+                'Sorry, I was unable to generate a detailed answer. Please try again.',
+              isLoading: false,
+            }
             : a
         )
       );
@@ -100,7 +102,15 @@ const AIInsights = () => {
   };
 
   useEffect(() => {
-    loadInsights();
+    const local_Insight = localStorage.getItem('lastAIInsights');
+    const local_InsightTime = localStorage.getItem('lastAIInsightsTime');
+    if (local_Insight && local_InsightTime) {
+      setInsights(JSON.parse(local_Insight));
+      setLastUpdated(new Date(local_InsightTime));
+      setIsLoading(false);
+    } else {
+      loadInsights();
+    }
   }, []);
 
   const getInsightIcon = (type: string) => {
@@ -270,15 +280,14 @@ const AIInsights = () => {
                 <div className='flex-1'>
                   <div className='flex items-center gap-2 sm:gap-3 mb-2'>
                     <div
-                      className={`w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center ${
-                        insight.type === 'warning'
+                      className={`w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center ${insight.type === 'warning'
                           ? 'bg-yellow-100 dark:bg-yellow-900/50'
                           : insight.type === 'success'
-                          ? 'bg-green-100 dark:bg-green-900/50'
-                          : insight.type === 'tip'
-                          ? 'bg-emerald-100 dark:bg-emerald-900/50'
-                          : 'bg-emerald-100 dark:bg-emerald-900/50'
-                      }`}
+                            ? 'bg-green-100 dark:bg-green-900/50'
+                            : insight.type === 'tip'
+                              ? 'bg-emerald-100 dark:bg-emerald-900/50'
+                              : 'bg-emerald-100 dark:bg-emerald-900/50'
+                        }`}
                     >
                       <span className='text-sm sm:text-lg'>
                         {getInsightIcon(insight.type)}
@@ -304,9 +313,8 @@ const AIInsights = () => {
                         onClick={() => handleActionClick(insight)}
                         className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg font-medium text-xs cursor-pointer transition-all duration-200 ${getButtonColors(
                           insight.type
-                        )} hover:bg-white/50 dark:hover:bg-gray-700/50 ${
-                          currentAnswer ? 'bg-white/50 dark:bg-gray-700/50' : ''
-                        }`}
+                        )} hover:bg-white/50 dark:hover:bg-gray-700/50 ${currentAnswer ? 'bg-white/50 dark:bg-gray-700/50' : ''
+                          }`}
                       >
                         <span>{insight.action}</span>
                         {currentAnswer?.isLoading ? (
