@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-
+const ai_model = 'google/gemini-2.0-flash-exp:free'
 interface RawInsight {
   type?: string;
   title?: string;
@@ -68,7 +68,8 @@ export async function generateExpenseInsights(
     Return only valid JSON array, no additional text.`;
 
     const completion = await openai.chat.completions.create({
-      model: 'deepseek/deepseek-chat-v3-0324:free',
+      // model: 'deepseek/deepseek-chat-v3-0324:free',
+      model: ai_model,
       messages: [
         {
           role: 'system',
@@ -202,7 +203,8 @@ export async function generateAIAnswer(
     Return only the answer text, no additional formatting.`;
 
     const completion = await openai.chat.completions.create({
-      model: 'deepseek/deepseek-chat-v3-0324:free',
+      // model: 'deepseek/deepseek-chat-v3-0324:free',
+      model: ai_model,
       messages: [
         {
           role: 'system',
