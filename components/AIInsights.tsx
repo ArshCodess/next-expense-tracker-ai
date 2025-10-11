@@ -24,6 +24,7 @@ const AIInsights = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [aiAnswers, setAiAnswers] = useState<AIAnswer[]>([]);
+  const [canRefresh, setCanRefresh] = useState(true);
 
   const loadInsights = async () => {
     setIsLoading(true);
@@ -104,13 +105,20 @@ const AIInsights = () => {
   useEffect(() => {
     const local_Insight = localStorage.getItem('lastAIInsights');
     const local_InsightTime = localStorage.getItem('lastAIInsightsTime');
+    const now = Date.now();
+
     if (local_Insight && local_InsightTime) {
-      setInsights(JSON.parse(local_Insight));
-      setLastUpdated(new Date(local_InsightTime));
-      setIsLoading(false);
-    } else {
-      loadInsights();
+      const cachedTime = new Date(local_InsightTime).getTime();
+      const cacheAgeMinutes = (now - cachedTime) / 60000;
+
+      if (cacheAgeMinutes < 60) { // cache valid for 1 hour
+        setInsights(JSON.parse(local_Insight));
+        setLastUpdated(new Date(local_InsightTime));
+        setIsLoading(false);
+        return;
+      }
     }
+    loadInsights();
   }, []);
 
   const getInsightIcon = (type: string) => {
@@ -172,6 +180,13 @@ const AIInsights = () => {
     if (diffHours < 24) return `${diffHours}h ago`;
 
     return lastUpdated.toLocaleDateString();
+  };
+
+  const throttledLoadInsights = async () => {
+    if (!canRefresh) return;
+    setCanRefresh(false);
+    await loadInsights();
+    setTimeout(() => setCanRefresh(true), 60000); // 1 min cooldown
   };
 
   if (isLoading) {
@@ -254,7 +269,7 @@ const AIInsights = () => {
             </span>
           </div>
           <button
-            onClick={loadInsights}
+            onClick={throttledLoadInsights}
             className='w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-r from-emerald-600 via-green-500 to-teal-500 hover:from-emerald-700 hover:via-green-600 hover:to-teal-600 text-white rounded-xl flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200'
             disabled={isLoading}
           >
