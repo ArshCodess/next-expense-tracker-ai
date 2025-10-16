@@ -8,8 +8,11 @@ import UserInfoSkeleton from '@/components/skeletons/UserInfoSkeleton';
 import TotalExpenses, { TotalExpensesSkeleton } from '@/components/TotalExpenses';
 import UserInfo from '@/components/UserInfo';
 import { Suspense } from 'react';
+import getTotalExpenses from '../actions/getTotalExpense';
 
 export default async function Dashboard() {
+  const { monthly } = await getTotalExpenses();
+  const totalMonthlyExpense = monthly?.reduce((acc, record) => acc + record.amount, 0) || 0;
   return (
     <main className='bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans min-h-screen transition-colors duration-300'>
       {/* Mobile-optimized container with responsive padding */}
@@ -28,7 +31,10 @@ export default async function Dashboard() {
             {
               <TotalExpenses />
             }
-            <BudgetPanel />
+            {
+
+              <BudgetPanel initialBudget={2000} currentSpent={totalMonthlyExpense}/>
+            }
           </div>
 
           {/* Right Column - Stacked below on mobile */}

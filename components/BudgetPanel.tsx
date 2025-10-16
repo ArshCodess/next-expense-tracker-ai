@@ -14,7 +14,7 @@ const formatINR = (n: number) =>
 
 const getStatus = (budget: number, spent: number): BudgetStatus => {
   if (budget <= 0 && spent > 0) return 'over';
-  if (spent > budget) return 'over';
+  if (spent >= budget) return 'over';
   if (budget <= 0) return 'safe';
   const remaining = budget - spent;
   const ratio = remaining / budget;
@@ -126,9 +126,9 @@ const BudgetPanel = ({
             className={[
               'h-full rounded-full transition-all duration-300',
               status === 'over'
-                ? 'bg-gradient-to-r from-rose-500 to-amber-500'
+                ? 'bg-gradient-to-r to-rose-500 from-amber-500'
                 : status === 'warning'
-                ? 'bg-gradient-to-r from-amber-500 to-emerald-500'
+                ? 'bg-gradient-to-r to-amber-500 from-emerald-500'
                 : 'bg-gradient-to-r from-emerald-600 via-green-500 to-teal-500',
             ].join(' ')}
             style={{ width: `${percent}%` }}
