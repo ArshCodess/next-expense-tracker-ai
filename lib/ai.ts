@@ -16,6 +16,22 @@ const openai = new OpenAI({
     'X-Title': 'ExpenseTracker AI',
   },
 });
+const openai2 = new OpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.OPENROUTER_API_KEY_2 || process.env.OPENAI_API_KEY,
+  defaultHeaders: {
+    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+    'X-Title': 'ExpenseTracker AI',
+  },
+});
+const openai3 = new OpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.OPENROUTER_API_KEY_3 || process.env.OPENAI_API_KEY,
+  defaultHeaders: {
+    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+    'X-Title': 'ExpenseTracker AI',
+  },
+});
 
 export interface ExpenseRecord {
   id: string;
@@ -120,6 +136,22 @@ export async function generateExpenseInsights(
     return formattedInsights;
   } catch (error) {
     console.error('❌ Error generating AI insights:', error);
+    const er = error?.toString() || "";
+    if (er.includes("429 Rate limit exceeded")) {
+      console.log("Rate really exceeded trying model2");
+      // Fallback to mock insights if AI fails
+      return [
+        {
+          id: 'fallback-2',
+          type: 'info',
+          title: 'AI Analysis due to RATE LIMIT',
+          message:
+            'Unable to generate personalized insights today🙁. Please try again later.',
+          action: 'Refresh insights',
+          confidence: 0.5,
+        },
+      ];
+    }
 
     // Fallback to mock insights if AI fails
     return [

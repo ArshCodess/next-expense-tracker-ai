@@ -9,6 +9,7 @@ import TotalExpenses, { TotalExpensesSkeleton } from '@/components/TotalExpenses
 import UserInfo from '@/components/UserInfo';
 import { Suspense } from 'react';
 import getTotalExpenses from '../actions/getTotalExpense';
+import { useAuth } from '@clerk/nextjs';
 
 export default async function Dashboard() {
   const { monthly } = await getTotalExpenses();
