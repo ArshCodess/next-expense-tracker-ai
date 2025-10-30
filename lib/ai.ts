@@ -144,7 +144,7 @@ export async function generateExpenseInsights(
         {
           id: 'fallback-2',
           type: 'info',
-          title: 'AI Analysis due to RATE LIMIT',
+          title: 'AI Analysis unavialable due to RATE LIMIT',
           message:
             'Unable to generate personalized insights today🙁. Please try again later.',
           action: 'Refresh insights',
