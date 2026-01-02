@@ -22,55 +22,21 @@ export const TotalExpensesSkeleton = () => (
     </div>
 );
 
+type ExpenseFreq = {
+        year: number,
+        monthly: number,
+        daily: number
+    }
 // Main TotalExpenses component
-const TotalExpenses = () => {
+const TotalExpenses = (expense:ExpenseFreq) => {
 
-    const [loading, setLoading] = useState(false);
     type ExpenseKey = 'year' | 'monthly' | 'daily';
     const TAB_OPTIONS: { label: string; key: ExpenseKey; icon: string }[] = [
         { label: 'Year', key: 'year', icon: '📈' },
         { label: 'Month Wise', key: 'monthly', icon: '📅' },
         { label: 'Day Wise', key: 'daily', icon: '📜' },
     ];
-
-    async function LoadRecords() {
-        setLoading(true);
-        try {
-            const { records, daily, monthly, yearly, error } = await getTotalExpenses();
-            console.log(records, error);
-            const totalExpense = records?.reduce((acc, record) => acc + record.amount, 0) || 0;
-            console.log('Total Expense:', totalExpense);
-            const totalDailyExpense = daily?.reduce((acc, record) => acc + record.amount, 0) || 0;
-            console.log('Total Daily Expense:', totalDailyExpense);
-            const totalMonthlyExpense = monthly?.reduce((acc, record) => acc + record.amount, 0) || 0;
-            console.log('Total Monthly Expense:', totalMonthlyExpense);
-            const totalYearlyExpense = yearly?.reduce((acc, record) => acc + record.amount, 0) || 0;
-            console.log('Total Yearly Expense:', totalYearlyExpense);
-            setexpenseAmount({
-                year: totalYearlyExpense,
-                monthly: totalMonthlyExpense,
-                daily: totalDailyExpense
-            })
-
-        } catch (error) {
-            console.error('Error fetching records:', error);
-        } finally {
-            setLoading(false);
-        }
-    }
     const [activeTab, setActiveTab] = useState<ExpenseKey>('year');
-    const [expenseAmounts, setexpenseAmount] = useState({
-        year: 0,
-        monthly: 0,
-        daily: 0,
-    });
-    useEffect(() => {
-        LoadRecords();
-    }, [])
-
-    if (loading) {
-        return <TotalExpensesSkeleton />;
-    }
 
     return (
         <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 sm:p-6 rounded-2xl shadow-xl border border-gray-100/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-200">
@@ -95,7 +61,7 @@ const TotalExpenses = () => {
                     <div className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100  flex items-center gap-2">
                         <span>{TAB_OPTIONS.find((t) => t.key === activeTab)?.icon}</span>
                         <span>
-                            {expenseAmounts[activeTab]}
+                            {expense[activeTab]}
                         </span>
                     </div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">

@@ -118,7 +118,8 @@ const AIInsights = () => {
         return;
       }
     }
-    loadInsights();
+    else
+      loadInsights();
   }, []);
 
   const getInsightIcon = (type: string) => {

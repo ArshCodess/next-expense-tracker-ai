@@ -7,13 +7,22 @@ import RecordHistory from '@/components/RecordHistory';
 import UserInfoSkeleton from '@/components/skeletons/UserInfoSkeleton';
 import TotalExpenses, { TotalExpensesSkeleton } from '@/components/TotalExpenses';
 import UserInfo from '@/components/UserInfo';
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import getTotalExpenses from '../actions/getTotalExpense';
-import { useAuth } from '@clerk/nextjs';
+import { currentUser } from '@clerk/nextjs/server';
+import TotalExpensesServer from '@/components/TotalExpenseServer';
 
 export default async function Dashboard() {
-  const { monthly } = await getTotalExpenses();
+  // const [loading, setLoading] = useState(true);
+  // const user = await currentUser().then(()=> setLoading(false));
+  // if (loading) {
+  //   return <div>Loading.......</div>;
+  // }
+  const { records, daily, monthly, yearly, error } = await getTotalExpenses();
+  const totalExpense = records?.reduce((acc, record) => acc + record.amount, 0) || 0;
+  const totalDailyExpense = daily?.reduce((acc, record) => acc + record.amount, 0) || 0;
   const totalMonthlyExpense = monthly?.reduce((acc, record) => acc + record.amount, 0) || 0;
+  const totalYearlyExpense = yearly?.reduce((acc, record) => acc + record.amount, 0) || 0;
   return (
     <main className='bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans min-h-screen transition-colors duration-300'>
       {/* Mobile-optimized container with responsive padding */}
@@ -30,11 +39,12 @@ export default async function Dashboard() {
               </Suspense>
             }
             {
-              <TotalExpenses />
+              <TotalExpenses daily={totalDailyExpense} year={totalYearlyExpense} monthly={totalMonthlyExpense} 
+              />
             }
             {
 
-              <BudgetPanel initialBudget={2000} currentSpent={totalMonthlyExpense}/>
+              <BudgetPanel initialBudget={2000} currentSpent={totalMonthlyExpense} />
             }
           </div>
 

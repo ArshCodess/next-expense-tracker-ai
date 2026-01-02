@@ -79,7 +79,7 @@ async function addExpenseRecord(formData: FormData): Promise<RecordResult> {
       date: createdRecord.date?.toISOString() || date,
     };
 
-    revalidatePath('/');
+    revalidatePath('/dashboard');
 
     return { data: recordData };
   } catch (error) {

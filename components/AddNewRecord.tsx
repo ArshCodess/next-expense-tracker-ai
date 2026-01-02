@@ -1,5 +1,6 @@
 'use client';
 import { useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import addExpenseRecord from '@/app/actions/addExpenseRecord';
 import { suggestCategory } from '@/app/actions/suggestCategory';
 
@@ -12,6 +13,8 @@ const AddRecord = () => {
   const [category, setCategory] = useState(''); // State for selected expense category
   const [description, setDescription] = useState(''); // State for expense description
   const [isCategorizingAI, setIsCategorizingAI] = useState(false); // State for AI categorization loading
+
+  const router = useRouter();
 
   const clientAction = async (formData: FormData) => {
     setIsLoading(true); // Show spinner
@@ -32,6 +35,7 @@ const AddRecord = () => {
       setAmount('0'); // Reset the amount to the default value as string
       setCategory(''); // Reset the category
       setDescription(''); // Reset the description
+      router.refresh(); // Refresh the page to update server components
     }
 
     setIsLoading(false); // Hide spinner
