@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-const ai_model = 'google/gemini-2.0-flash-exp:free'
+const ai_model = 'google/gemma-4-31b-it:free'
 interface RawInsight {
   type?: string;
   title?: string;
@@ -16,22 +16,22 @@ const openai = new OpenAI({
     'X-Title': 'ExpenseTracker AI',
   },
 });
-const openai2 = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY_2 || process.env.OPENAI_API_KEY,
-  defaultHeaders: {
-    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-    'X-Title': 'ExpenseTracker AI',
-  },
-});
-const openai3 = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY_3 || process.env.OPENAI_API_KEY,
-  defaultHeaders: {
-    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-    'X-Title': 'ExpenseTracker AI',
-  },
-});
+// const openai2 = new OpenAI({
+//   baseURL: 'https://openrouter.ai/api/v1',
+//   apiKey: process.env.OPENROUTER_API_KEY_2 || process.env.OPENAI_API_KEY,
+//   defaultHeaders: {
+//     'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+//     'X-Title': 'ExpenseTracker AI',
+//   },
+// });
+// const openai3 = new OpenAI({
+//   baseURL: 'https://openrouter.ai/api/v1',
+//   apiKey: process.env.OPENROUTER_API_KEY_3 || process.env.OPENAI_API_KEY,
+//   defaultHeaders: {
+//     'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+//     'X-Title': 'ExpenseTracker AI',
+//   },
+// });
 
 export interface ExpenseRecord {
   id: string;

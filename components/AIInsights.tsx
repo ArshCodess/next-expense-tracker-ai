@@ -107,19 +107,18 @@ const AIInsights = () => {
     const local_InsightTime = localStorage.getItem('lastAIInsightsTime');
     const now = Date.now();
 
-    if (local_Insight && local_InsightTime) {
-      const cachedTime = new Date(local_InsightTime).getTime();
-      const cacheAgeMinutes = (now - cachedTime) / 60000;
-
-      if (cacheAgeMinutes < 60) { // cache valid for 1 hour
-        setInsights(JSON.parse(local_Insight));
-        setLastUpdated(new Date(local_InsightTime));
-        setIsLoading(false);
-        return;
-      }
+    if (
+      local_Insight &&
+      local_InsightTime &&
+      (now - new Date(local_InsightTime).getTime()) / 60000 < 60
+    ) {
+      setInsights(JSON.parse(local_Insight));
+      setLastUpdated(new Date(local_InsightTime));
+      setIsLoading(false);
+      return;
     }
-    else
-      loadInsights();
+
+    loadInsights();
   }, []);
 
   const getInsightIcon = (type: string) => {
