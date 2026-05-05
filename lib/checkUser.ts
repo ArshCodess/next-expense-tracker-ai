@@ -4,7 +4,6 @@ import { db } from './db';
 
 export const checkUser = async () => {
   const user = await currentUser();
- console.log('Checking user:', user);
  
   if (!user) {
     return null;

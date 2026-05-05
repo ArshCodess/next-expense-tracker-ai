@@ -1,5 +1,6 @@
-import OpenAI from 'openai';
+import { GoogleGenAI } from '@google/genai';
 const ai_model = 'google/gemma-4-31b-it:free'
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 interface RawInsight {
   type?: string;
   title?: string;
@@ -8,30 +9,6 @@ interface RawInsight {
   confidence?: number;
 }
 
-const openai = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY,
-  defaultHeaders: {
-    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-    'X-Title': 'ExpenseTracker AI',
-  },
-});
-// const openai2 = new OpenAI({
-//   baseURL: 'https://openrouter.ai/api/v1',
-//   apiKey: process.env.OPENROUTER_API_KEY_2 || process.env.OPENAI_API_KEY,
-//   defaultHeaders: {
-//     'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-//     'X-Title': 'ExpenseTracker AI',
-//   },
-// });
-// const openai3 = new OpenAI({
-//   baseURL: 'https://openrouter.ai/api/v1',
-//   apiKey: process.env.OPENROUTER_API_KEY_3 || process.env.OPENAI_API_KEY,
-//   defaultHeaders: {
-//     'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-//     'X-Title': 'ExpenseTracker AI',
-//   },
-// });
 
 export interface ExpenseRecord {
   id: string;
@@ -82,29 +59,19 @@ export async function generateExpenseInsights(
     4. Positive reinforcement for good habits
 
     Return only valid JSON array, no additional text.`;
-
-    const completion = await openai.chat.completions.create({
-      // model: 'deepseek/deepseek-chat-v3-0324:free',
-      model: ai_model,
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are an Indian financial advisor AI that analyzes spending patterns and provides actionable insights. Always respond with valid JSON only.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      max_tokens: 1000,
+    const completion = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+      config: {
+        systemInstruction: 'You are an Indian financial advisor AI that analyzes spending patterns and provides actionable insights. Always respond with valid JSON only.',
+      },
     });
 
-    const response = completion.choices[0].message.content;
+    const response = completion.text;
     if (!response) {
       throw new Error('No response from AI');
     }
+    console.log('✅ AI response received:', response);
 
     // Clean the response by removing markdown code blocks if present
     let cleanedResponse = response.trim();
@@ -120,6 +87,7 @@ export async function generateExpenseInsights(
 
     // Parse AI response
     const insights = JSON.parse(cleanedResponse);
+
 
     // Add IDs and ensure proper format
     const formattedInsights = insights.map(
@@ -170,24 +138,17 @@ export async function generateExpenseInsights(
 
 export async function categorizeExpense(description: string): Promise<string> {
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'deepseek/deepseek-chat-v3-0324:free',
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are an expense categorization AI. Categorize expenses into one of these categories: Food, Transportation, Entertainment, Shopping, Bills, Healthcare, Other. Respond with only the category name.',
-        },
-        {
-          role: 'user',
-          content: `Categorize this expense: "${description}"`,
-        },
-      ],
-      temperature: 0.1,
-      max_tokens: 20,
+    const completion = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: `Categorize this expense ${description}`,
+      config: {
+        systemInstruction: 'You are an expense categorization AI. Categorize expenses into one of these categories: Food, Transportation, Entertainment, Shopping, Bills, Healthcare, Other. Respond with only the category name.',
+        maxOutputTokens: 10,
+        temperature: 0.7,
+      },
     });
 
-    const category = completion.choices[0].message.content?.trim();
+    const category = completion.text?.trim();
 
     const validCategories = [
       'Food',
@@ -233,26 +194,18 @@ export async function generateAIAnswer(
     4. Keeps the response concise but informative (2-3 sentences)
     
     Return only the answer text, no additional formatting.`;
+    const sysPrompt = 'You are a helpful financial advisor AI that provides specific, actionable answers based on expense data. Be concise but thorough.';
 
-    const completion = await openai.chat.completions.create({
-      // model: 'deepseek/deepseek-chat-v3-0324:free',
-      model: ai_model,
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are a helpful financial advisor AI that provides specific, actionable answers based on expense data. Be concise but thorough.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      max_tokens: 200,
+    const completion = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+      config: {
+        systemInstruction: sysPrompt,
+        maxOutputTokens: 200,
+        temperature: 0.7,
+      },
     });
-
-    const response = completion.choices[0].message.content;
+    const response = completion.text;
     if (!response) {
       throw new Error('No response from AI');
     }

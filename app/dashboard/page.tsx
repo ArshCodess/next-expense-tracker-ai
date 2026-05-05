@@ -9,15 +9,8 @@ import TotalExpenses, { TotalExpensesSkeleton } from '@/components/TotalExpenses
 import UserInfo from '@/components/UserInfo';
 import { Suspense, useState } from 'react';
 import getTotalExpenses from '../actions/getTotalExpense';
-import { currentUser } from '@clerk/nextjs/server';
-import TotalExpensesServer from '@/components/TotalExpenseServer';
 
 export default async function Dashboard() {
-  // const [loading, setLoading] = useState(true);
-  // const user = await currentUser().then(()=> setLoading(false));
-  // if (loading) {
-  //   return <div>Loading.......</div>;
-  // }
   const { records, daily, monthly, yearly, error } = await getTotalExpenses();
   const totalExpense = records?.reduce((acc, record) => acc + record.amount, 0) || 0;
   const totalDailyExpense = daily?.reduce((acc, record) => acc + record.amount, 0) || 0;
@@ -38,14 +31,8 @@ export default async function Dashboard() {
                 <UserInfo />
               </Suspense>
             }
-            {
-              <TotalExpenses daily={totalDailyExpense} year={totalYearlyExpense} monthly={totalMonthlyExpense} 
-              />
-            }
-            {
-
-              <BudgetPanel initialBudget={2000} currentSpent={totalMonthlyExpense} />
-            }
+            <TotalExpenses daily={totalDailyExpense} year={totalYearlyExpense} monthly={totalMonthlyExpense} />
+            <BudgetPanel initialBudget={2000} currentSpent={totalMonthlyExpense} />
           </div>
 
           {/* Right Column - Stacked below on mobile */}
